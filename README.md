@@ -59,7 +59,7 @@ Example:
 ```
 PASSWORD CHECKER
 
-Enter a password: Catlover22
+Enter a password: Jeffarisapoopyhead123
 
 Score: 4 / 5
 Verdict: Medium
