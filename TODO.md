@@ -1,6 +1,3 @@
-- password_checker checks common passwords ("passwords.txt") using hash table lookup O(1)
-- password_checker option to show password or hide with asterisk
-
 - basic password generator (doesn't ask anything), (automatically generates a 16-character password), (quick)
 - advanced password generator (asks length [greater than 1]), (option to include lowercase, uppercase, numbers, symbols), (how many passwords if more than 1 [separated by newline])
 - password generator uses 10 highly-compatible symbols !@#$%_-.+?
@@ -24,3 +21,7 @@
 - port scanner tool option for timeout (in milliseconds)
 - port scanner tool detects service
 - port scanner tool prints total ports scanned, total ports open/closed, time taken (e.g. 3.14 seconds)
+
+DONE:
+- password_checker checks common passwords ("passwords.txt") using hash table lookup O(1)
+- password_checker option to show password input or hide using getpass
