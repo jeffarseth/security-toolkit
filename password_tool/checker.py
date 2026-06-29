@@ -1,11 +1,11 @@
 # Jeffar - Password Checker
 # Description - Evaluates password strength.
-# Last updated - 2026-06-27
+# Last updated - 2026-06-28
 
 # Modules
 # i learnt the differences between libraries, modules, and the functions inside a module (class)
-from pathlib import Path    # gets filepath
-from getpass import getpass # hides input
+from pathlib import Path    # for filepath
+from getpass import getpass # for hiding input
 
 # Constants
 MIN_LENGTH = 8                                                              # password's minimum length
@@ -79,6 +79,7 @@ def main():
     if check_wordlist(password, load_wordlist()):
         print(f"WARNING: \"{password}\" was found in a list of commonly-used passwords!")
 
+# Functions
 def enter_password():
     """
     enter_password - prompts the user to enter a password

@@ -1,7 +1,3 @@
-- basic password generator (doesn't ask anything), (automatically generates a 16-character password), (quick)
-- advanced password generator (asks length [greater than 1]), (option to include lowercase, uppercase, numbers, symbols), (how many passwords if more than 1 [separated by newline])
-- password generator uses 10 highly-compatible symbols !@#$%_-.+?
-
 - combine password_checker and password_generator and name the program "password tool"
 
 - hash generator (MD5, SHA-1, SHA-256, SHA-512, SHA3-256, SHA3-512)
