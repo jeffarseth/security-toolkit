@@ -79,62 +79,92 @@ def main():
     if check_wordlist(password, load_wordlist()):
         print(f"WARNING: \"{password}\" was found in a list of commonly-used passwords!")
 
-# enter_password - prompts the user to enter a password
 def enter_password():
+    """
+    enter_password - prompts the user to enter a password
+    """
+
     hide = ""
 
-    while hide != 'Y' and hide != 'N':
+    # input validation
+    while True:
         hide = input("Hide input (Y/N)? ").upper()
 
-    if hide == 'Y': 
-        password = getpass("Enter a password: ")    # user input's hidden
-    elif hide == 'N':
-        password = input("Enter a password: ")      # user inputs in plaintext
+        if hide == 'Y': 
+            password = getpass("Enter a password: ")    # user input's hidden
+            break
+        elif hide == 'N':
+            password = input("Enter a password: ")      # user inputs in plaintext
+            break
+        else:
+            print("\033[31mINVALID INPUT\033[0m")
 
     return password
 
-# check_length - checks password
-# password - the password the user wants to check
 def check_length(password):
+    """
+    check_length - checks password
+
+    password - the password the user wants to check
+    """
+
     if len(password) >= MIN_LENGTH:
         return True
     return False
     
-# check_uppercase - checks if password has an uppercase
-# password - the password the user wants to check
 def check_uppercase(password):
+    """
+    check_uppercase - checks if password has an uppercase
+
+    password - the password the user wants to check
+    """
+
     for i in password:
         if i.isupper():
             return True
     return False
 
-# check_lowercase - checks if password has a lowercase
-# password - the password the user wants to check
 def check_lowercase(password):
+    """
+    check_lowercase - checks if password has a lowercase
+    
+    password - the password the user wants to check
+    """
+
     for i in password:
         if i.islower():
             return True
     return False
 
-# check_digit - checks if password has a digit
-# password - the password the user wants to check
 def check_digit(password):
+    """
+    check_digit - checks if password has a digit
+
+    password - the password the user wants to check
+    """
     for i in password:
         if i.isdigit():
             return True
     return False
 
-# check_symbol - checks if password has atleast a symbol
-# password - the password the user wants to check
 def check_symbol(password):
+    """
+    check_symbol - checks if password has atleast a symbol
+    
+    password - the password the user wants to check
+    """
+
     symbols = r'!"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~'
 
     if any(char in symbols for char in password):
         return True
     return False
 
-# load_wordlist - returns the passwords (set) of password.txt
 def load_wordlist():
+    """
+    load_wordlist - returns the passwords (set) of password.txt
+    """
+
     if not WORDLIST_PATH.exists():      # if passwords.txt isn't found
         print("wordlist not found.")
         return set()                    # returns an empty set and ignores rest of the function
@@ -147,10 +177,15 @@ def load_wordlist():
 
     return wordlist_set
 
-# check_wordlist - checks if password is in passwords.txt
-# password - the password the user wants to check
-# wordlist - the set of common passwords
 def check_wordlist(password, wordlist):
+    """
+    check_wordlist - checks if password is in passwords.txt
+    
+    password - the password the user wants to check
+    
+    wordlist - the set of common passwords
+    """
+
     return password.lower() in wordlist         # compares password to wordlist using 'in' then returns True if password is found in wordlist
                                                 # lower() makes it case-insensitive (match with wordlist)
 
