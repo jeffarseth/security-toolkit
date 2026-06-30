@@ -1,6 +1,7 @@
 # Jeffar - Password Checker
 # Description - Evaluates password strength.
-# Last updated - 2026-06-28
+# Created - 2026-06-21
+# Last updated - 2026-06-30
 
 # Modules
 # i learnt the differences between libraries, modules, and the functions inside a module (class)
@@ -190,4 +191,6 @@ def check_wordlist(password, wordlist):
     return password.lower() in wordlist         # compares password to wordlist using 'in' then returns True if password is found in wordlist
                                                 # lower() makes it case-insensitive (match with wordlist)
 
-main()
+# dunder name guard
+if __name__ == "__main__":
+    main()

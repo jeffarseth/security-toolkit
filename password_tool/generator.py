@@ -1,6 +1,7 @@
 # Jeffar - Password Generator
 # Description - Generates passwords with custom options.
-# Last updated - 2026-06-28
+# Created - 2026-06-28
+# Last updated - 2026-06-30
 
 # Modules
 import secrets      # for cryptographically generating passwords
@@ -179,4 +180,6 @@ def generate_advanced():
  
     return "\n".join(passwords)                                                                 # returns all passwords separated by newline
 
-main()
+# dunder name guard
+if __name__ == "__main__":
+    main()
