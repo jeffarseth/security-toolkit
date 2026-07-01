@@ -21,7 +21,6 @@ def main():
     has_digit = False               # default: digit not present
     has_symbol = False              # default: symbol not present
 
-    print("PASSWORD CHECKER\n")
     password = enter_password()
 
     # add one to the score if there are >= 8 characters

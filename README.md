@@ -13,8 +13,7 @@ This toolkit is intended for **learning and authorized security testing only**. 
 ## Features
 
 ### Password Tool
-- **Strength checker** — scores a password against length, uppercase, lowercase, digit, and symbol rules, and reports exactly what's missing.
-- **Common-password detection** — check a candidate against a list of 100k+ known-common passwords using an O(1) set lookup.
+- **Strength checker** — scores a password against length, uppercase, lowercase, digit, and symbol rules, and reports exactly what's missing. Includes common-password detection to check a candidate against a list of 100k+ known-common passwords using an O(1) set lookup.
 - **Generator** — produce strong random passwords using Python's `secrets` module (cryptographically secure, unlike `random`), with basic and advanced modes.
 
 ### Hash Tool *(planned)*
@@ -44,15 +43,22 @@ pip install -r requirements.txt   # installs pytest
 
 ## Usage
 
-Tools are run directly for now. The password strength checker:
+Run the password tool's unified menu from the repo root:
 
 ```bash
-python password_tool/checker.py
+python -m password_tool.cli
 ```
 
 Example:
 
 ```
+PASSWORD TOOL
+
+(1) Check a password
+(2) Generate a password
+(0) Exit
+Select option: 1
+
 PASSWORD CHECKER
 
 Enter a password: Jeffarisapoopyhead123
@@ -62,14 +68,15 @@ Verdict: Medium
 Missing: symbol
 ```
 
-A unified `main.py` entry point that dispatches to all tools is planned (see Roadmap).
+A repo-root `main.py` that dispatches across password, hash, and scan tools is planned (see Roadmap).
 
 ## Roadmap
 
 - [x] Password strength checker
 - [x] Common-password set lookup
 - [x] Password generator (basic + advanced)
-- [ ] Unified `main.py` CLI dispatcher
+- [x] Password tool CLI (check + generate menu)
+- [ ] Unified `main.py` entry point (dispatches password / hash / scan)
 - [ ] Hash tool (generate, salt, compare)
 - [ ] Port scanner (quick / full / custom, service detection)
 - [ ] Shared `utils/` layer

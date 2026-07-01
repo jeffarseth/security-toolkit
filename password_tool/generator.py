@@ -22,8 +22,6 @@ DIGITS_SET = string.digits
 def main():
     user_input = ""
 
-    print("PASSWORD GENERATOR\n")
-
     while True:
         print("Select an option")
         print("(1) Basic mode")
@@ -40,7 +38,7 @@ def main():
         elif user_input == '2':
             print(generate_advanced())
         elif user_input == '0':
-            sys.exit(0)
+            return
         else:
             print("\033[31mINVALID INPUT\033[0m")
 
