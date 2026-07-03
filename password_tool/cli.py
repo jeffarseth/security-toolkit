@@ -1,17 +1,14 @@
 # Jeffar - Password Tool CLI
-# Description - combines all password checker and generator tool into one script
+# Description - Combines all password checker and generator tool into one script.
 # Created - 2026-06-30
-# Last updated - 2026-06-30
+# Last updated - 2026-07-02
 
 # Modules
 # note: KEEP __init__.py
 from password_tool import checker       # for password checker
 from password_tool import generator     # for password generator
 
-import sys          # for checking os
-WINDOWS = sys.platform == "win32"
-if WINDOWS:
-    import msvcrt   # for key press (windows only)
+import sys          # for sys.exit()
 
 # Main function
 def main():
@@ -22,11 +19,8 @@ def main():
         print("(1) Check a password")
         print("(2) Generate a password")
         print("(0) Exit")
-
-        if WINDOWS:
-            user_input = msvcrt.getwch()
-        else:
-            user_input = input("Select option: ").strip()
+        
+        user_input = input("Select option: ").strip()
 
         if user_input == '1':
             checker.main()

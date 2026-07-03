@@ -1,10 +1,9 @@
 # Jeffar - Password Checker
 # Description - Evaluates password strength.
 # Created - 2026-06-21
-# Last updated - 2026-06-30
+# Last updated - 2026-07-02
 
 # Modules
-# i learnt the differences between libraries, modules, and the functions inside a module (class)
 from pathlib import Path    # for filepath
 from getpass import getpass # for hiding input
 
@@ -85,13 +84,13 @@ def enter_password():
     enter_password - prompts the user to enter a password
     """
 
-    hide = ""
+    hide = ""                                           # option to hide input
 
     # input validation
     while True:
         hide = input("Hide input (Y/N)? ").upper()
 
-        if hide == 'Y': 
+        if hide == 'Y':
             password = getpass("Enter a password: ")    # user input's hidden
             break
         elif hide == 'N':

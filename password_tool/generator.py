@@ -7,11 +7,6 @@
 import secrets      # for cryptographically generating passwords
 import string       # for character sets
 
-import sys          # for checking os
-WINDOWS = sys.platform == "win32"
-if WINDOWS:
-    import msvcrt   # for key press (windows only)
-
 # Constants
 SYMBOLS_SET = "!@#$%_-.+?"
 LOWERCASE_SET = string.ascii_lowercase
@@ -28,10 +23,7 @@ def main():
         print("(2) Advanced mode")
         print("(0) Exit")
         
-        if WINDOWS:
-            user_input = msvcrt.getwch()
-        else:
-            user_input = input("Select option: ").strip()
+        user_input = input("Select option: ").strip()
 
         if user_input == '1':
             print(generate_basic())
