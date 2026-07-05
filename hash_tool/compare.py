@@ -14,7 +14,6 @@ def main():
 
     hash1 = input("Paste hash 1: ").strip()
     hash2 = input("Paste hash 2: ").strip()
-    ignore_case = input("Ignore case? (Y/N): ").strip().upper()
 
     while True:
         ignore_case = input("Ignore case? (Y/N): ").strip().upper()
