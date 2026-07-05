@@ -127,6 +127,8 @@ def hash_file():
     hash_file - hashes a file/folder
     """
 
+    user_input = ""     # handles user input when pasting directories
+
     # function lookup table for hashing algorithms
     hashing_algorithms = {
         "md5": md5_file,
@@ -151,10 +153,11 @@ def hash_file():
 
     # check if file/folder exists
     while True:
-        filepath = Path(input("Enter filepath: ").strip())
+        user_input = input("Enter filepath: ")                      # get raw string first
+        filepath = Path(user_input.strip().strip('"').strip("'"))   # removes leading/trailing whitespace/newlines and surrounding Windows quotes when using "Copy as path"
         
-        if filepath.exists():
-            break
+        if filepath.exists():                                       # check if file/folder exists on disk
+            break                                                   # exit loop when a valid path is found
         else:
             print("\033[31mPath not found.\033[0m")
 
