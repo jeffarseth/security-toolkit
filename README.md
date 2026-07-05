@@ -78,7 +78,7 @@ A repo-root `main.py` that dispatches across password, hash, and scan tools is p
 - [x] Password tool CLI (check + generate menu)
 - [x] Hash generator (generate, salt, hex/base64)
 - [x] Hash comparison tool
-- [ ] Hash tool CLI (unified generate + compare menu)
+- [x] Hash tool CLI (unified generate + compare menu)
 - [ ] Port scanner (quick / full / custom, service detection)
 - [ ] Unified `main.py` entry point (dispatches password / hash / scan)
 - [ ] Shared `utils/` layer
