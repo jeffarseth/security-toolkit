@@ -10,8 +10,6 @@ def main():
     ignore_case = ""    # option to ignore case-sensitivity
     match = False       # tells if the two hashes are a match: initialized to False
 
-    print("\nHASH COMPARE")
-
     hash1 = input("Paste hash 1: ").strip()
     hash2 = input("Paste hash 2: ").strip()
 

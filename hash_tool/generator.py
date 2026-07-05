@@ -21,8 +21,7 @@ SALT_LENGTH = 42                        # salt character length (~256 bits of en
 # Main function
 def main():
     user_input = ""
-
-    print("\nHASH GENERATOR")
+    
     print("(1) Hash text")
     print("(2) Hash a file")
     print("(0) Exit")
