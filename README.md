@@ -16,10 +16,10 @@ This toolkit is intended for **learning and authorized security testing only**. 
 - **Strength checker** — scores a password against length, uppercase, lowercase, digit, and symbol rules, and reports exactly what's missing. Includes common-password detection to check a candidate against a list of 100k+ known-common passwords using an O(1) set lookup.
 - **Generator** — produce strong random passwords using Python's `secrets` module (cryptographically secure, unlike `random`), with basic and advanced modes.
 
-### Hash Tool *(planned)*
+### Hash Tool
 - Generate hashes (MD5, SHA-1, SHA-256, SHA-512, SHA3-256, SHA3-512) of text or files.
 - Salting support, with hex or base64 output.
-- Compare a value against a known hash, with optional case-insensitive text matching.
+- Compare two known hashes directly, with optional case-insensitive comparison.
 
 ### Port Scanner *(planned)*
 - Scan a target across quick (common ports), full (0–65535), or custom port ranges.
@@ -76,7 +76,9 @@ A repo-root `main.py` that dispatches across password, hash, and scan tools is p
 - [x] Common-password set lookup
 - [x] Password generator (basic + advanced)
 - [x] Password tool CLI (check + generate menu)
-- [x] Hash tool (generate, salt, compare)
+- [x] Hash generator (generate, salt, hex/base64)
+- [x] Hash comparison tool
+- [ ] Hash tool CLI (unified generate + compare menu)
 - [ ] Port scanner (quick / full / custom, service detection)
 - [ ] Unified `main.py` entry point (dispatches password / hash / scan)
 - [ ] Shared `utils/` layer
