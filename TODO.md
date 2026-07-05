@@ -1,7 +1,3 @@
-- hash comparison tool (use previous hash generator program)
-- hash comparion tool can use text or file
-- hash comparison tool option to ignore case on text
-
 - combine hash generator and comparison tool and name the program "hash tool"
 
 - port scanner tool (asks target [e.g. scanme.nmap.org])
