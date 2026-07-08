@@ -21,7 +21,7 @@ This toolkit is intended for **learning and authorized security testing only**. 
 - Salting support, with hex or base64 output.
 - Compare two known hashes directly, with optional case-insensitive comparison.
 
-### Port Scanner *(planned)*
+### Port Scanner
 - Scan a target across quick (common ports), full (0–65535), or custom port ranges.
 - Configurable connection timeout.
 - Service detection and a summary report (ports scanned, open/closed counts, time taken).
@@ -79,7 +79,7 @@ A repo-root `main.py` that dispatches across password, hash, and scan tools is p
 - [x] Hash generator (generate, salt, hex/base64)
 - [x] Hash comparison tool
 - [x] Hash tool CLI (unified generate + compare menu)
-- [ ] Port scanner (quick / full / custom, service detection)
+- [x] Port scanner (quick / full / custom, service detection)
 - [ ] Unified `main.py` entry point (dispatches password / hash / scan)
 - [ ] Shared `utils/` layer
 - [ ] Unit tests
