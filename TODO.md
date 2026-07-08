@@ -1,5 +1,5 @@
-- port scanner tool (asks target [e.g. scanme.nmap.org])
-- port scanner tool option for port range (quick scan for common ports, full scan for 0-65535, or custom range like 0-1023)
-- port scanner tool option for timeout (in seconds)
-- port scanner tool detects service
-- port scanner tool prints total ports scanned, total ports open/closed, time taken (e.g. 3.14 seconds)
+- port scanner tool banner grabbing (e.g. Server: nginx/1.26.0)
+- port scanner tool multithreading
+- port scanner tool udp scanning
+- port scanner tool progress bar with scan percentage (e.g.████████▒░░░░ - 65% with ░ ▒ ▓ █) (e.g. Scanning 42598/65536 ports)
+- port scanner tool export as txt/json/csv then choosing which dir to save
