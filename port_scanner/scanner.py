@@ -1,7 +1,7 @@
 # Jeffar - Port Scanner
 # Description - Scans a target's ports with service detection and a summary report.
 # Created - 2026-07-05
-# Last updated - 2026-07-07
+# Last updated - 2026-07-08
 
 # IMPORTANT NOTE!!
 # SCOPE: only scan localhost or hosts you are explicitly authorized to test.
@@ -10,6 +10,10 @@
 import port_scanner.services as services    # for ports service lookup
 import time                                 # for elapsed time
 import socket                               # for sock: networking module
+
+# Consants
+LOADING_BAR_WIDTH = 30
+CLEAR_WIDTH = LOADING_BAR_WIDTH + 20        # enough spaces to cover bar + percent + count text (to clear/update bar)
 
 def main():
     user_input = "" # blank user input in str
@@ -47,7 +51,7 @@ def main():
     open_ports = scan_ipv4_tcp(ip, ports, timeout)
     end_time = time.time()
 
-    print("\nScan complete.")
+    print("\n\nScan complete.")
     print(f"Ports scanned: {len(ports)}")
     print(f"Open: {open_ports}")
     print(f"Closed: {len(ports) - open_ports}")
@@ -176,10 +180,17 @@ def scan_ipv4_tcp(ip, ports, timeout):
 
     success = None          # stores connect_ex() result (0 = successful connection)
     open_ports = 0          # amount of open ports: initialized to 0
+    port_count = 0          # amount of ports scanned: initialized to 0
+    percent = 0             # amount of percent scanned: initialized to 0
+    filled = 0              # amount of filled blocks: initialied to 0
+    bar = ""                # bar initialized
+    last_shown = -1         # impossible starting value so the first port always draws
 
     print(f"\nScanning {len(ports)} ports on {ip}...\n")
 
     for port in ports:# iterate through all ports
+        port_count += 1     # add 1 to count
+
         # create a TCP IPv4 socket object ready to connect
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -187,17 +198,29 @@ def scan_ipv4_tcp(ip, ports, timeout):
         sock.settimeout(timeout)
 
         # attempt to connect to a specific IP and port
-        success = sock.connect_ex((ip, port))                                   # unlike connect(), connect_ex() does not crash on failure.
+        success = sock.connect_ex((ip, port))                                   # unlike connect(), connect_ex() does not crash on failure
 
         # if connection was successful
         if success == 0:
+            print("\r" + " " * CLEAR_WIDTH + "\r", end="")                      # erase the leftover bar text first
             print(f"PORT {port}     OPEN    ({services.get_service(port)})")    # print service name if in dictionary
-            
             open_ports += 1
+
+        percent = int((port_count / len(ports)) * 100)                          # calculate percentage
+        if percent != last_shown:                                               # update the progress bar only when the percentage changes (bug found with full scan/many ports)
+            # calculate bar state
+            filled = (port_count * LOADING_BAR_WIDTH) // len(ports)             # use floor division to calculate how many "█" there is
+            bar = "█" * filled + "░" * (LOADING_BAR_WIDTH - filled)             # join the two strings together
+
+            print(f"[{bar}]", end=" ")                                          # print bar
+            print(f"{percent}%", end=" ")                                       # print percentage
+            print(f"({port_count}/{len(ports)})", end="\r")                     # print raw count. "\r" returns the cursor back so it can overwrite
+
+            last_shown = percent                                                # save the current percentage to compare on the next update
 
         # close the socket connection to not leak a resource
         sock.close()
-    
+
     return open_ports
 
 # dunder name guard
