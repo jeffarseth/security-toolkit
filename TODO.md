@@ -1,4 +1,3 @@
-- port scanner tool banner grabbing (e.g. Server: nginx/1.26.0)
 - port scanner tool multithreading
 - port scanner tool udp scanning
 - port scanner tool export as txt/json/csv then choosing which dir to save
