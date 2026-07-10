@@ -12,8 +12,9 @@ import time                                 # for elapsed time
 import socket                               # for sock: networking module
 
 # Consants
-LOADING_BAR_WIDTH = 30
+LOADING_BAR_WIDTH = 30                      # how wide the loading bar is
 CLEAR_WIDTH = LOADING_BAR_WIDTH + 20        # enough spaces to cover bar + percent + count text (to clear/update bar)
+BUFFER_SIZE = 1024                          # the maximum number of bytes to read in one call.
 
 def main():
     user_input = "" # blank user input in str
@@ -22,6 +23,7 @@ def main():
     timeout = 1     # how long to wait (in seconds) for a response before giving up on this port: initialized to 1 second for default
     start_time = 0  # start time for recording elapsed time during scan: initialized to 0 seconds
     end_time = 0    # end time for recording elapsed time during scan: initialized to 0 seconds
+    results = []    # holds port number, service name, and banner
     open_ports = 0  # amount of open ports: initialized to 0
 
     print("\nPORT SCANNER")
@@ -48,7 +50,8 @@ def main():
             print("\033[31mINVALID INPUT - enter a valid number!\033[0m")
 
     start_time = time.time()
-    open_ports = scan_ipv4_tcp(ip, ports, timeout)
+    results = scan_ipv4_tcp(ip, ports, timeout)
+    open_ports = len(results)
     end_time = time.time()
 
     print("\n\nScan complete.")
@@ -179,12 +182,14 @@ def scan_ipv4_tcp(ip, ports, timeout):
     """
 
     success = None          # stores connect_ex() result (0 = successful connection)
-    open_ports = 0          # amount of open ports: initialized to 0
+    results = []            # holds port number, service name, and banner
     port_count = 0          # amount of ports scanned: initialized to 0
     percent = 0             # amount of percent scanned: initialized to 0
     filled = 0              # amount of filled blocks: initialied to 0
     bar = ""                # bar initialized
     last_shown = -1         # impossible starting value so the first port always draws
+    banner = ""             # stores banner str
+    service_name = ""       # stores service name str
 
     print(f"\nScanning {len(ports)} ports on {ip}...\n")
 
@@ -202,12 +207,26 @@ def scan_ipv4_tcp(ip, ports, timeout):
 
         # if connection was successful
         if success == 0:
+            # get banner
+            try:
+                raw = sock.recv(BUFFER_SIZE)                                    # in bytes, or raises on timeout
+                banner = raw.decode(errors="replace").strip()                   # bytes to clean one-line string
+            except (socket.timeout, OSError):                                   # silent service or connection issue
+                banner = ""                                                     # leave it empty, keep scanning
+
+            # get service name
+            service_name = services.get_service(port)
+
             print("\r" + " " * CLEAR_WIDTH + "\r", end="")                      # erase the leftover bar text first
-            print(f"PORT {port}     OPEN    ({services.get_service(port)})")    # print service name if in dictionary
-            open_ports += 1
+
+            # print port number, service name if in dictionary, and banner if it exists
+            print(f"PORT {port}     OPEN    ({service_name})   {banner if banner else 'no banner'}")
+
+            # append to results[]
+            results.append({"port": port, "service": service_name, "banner": banner})
 
         percent = int((port_count / len(ports)) * 100)                          # calculate percentage
-        if percent != last_shown:                                               # update the progress bar only when the percentage changes (bug found with full scan/many ports)
+        if percent != last_shown:                                               # update the progress bar only when the percentage changes
             # calculate bar state
             filled = (port_count * LOADING_BAR_WIDTH) // len(ports)             # use floor division to calculate how many "█" there is
             bar = "█" * filled + "░" * (LOADING_BAR_WIDTH - filled)             # join the two strings together
@@ -221,7 +240,7 @@ def scan_ipv4_tcp(ip, ports, timeout):
         # close the socket connection to not leak a resource
         sock.close()
 
-    return open_ports
+    return results
 
 # dunder name guard
 if __name__ == "__main__":
