@@ -1,7 +1,7 @@
 # Jeffar - Port Scanner
 # Description - Scans a target's ports with service detection and a summary report.
 # Created - 2026-07-05
-# Last updated - 2026-07-08
+# Last updated - 2026-07-10
 
 # IMPORTANT NOTE!!
 # SCOPE: only scan localhost or hosts you are explicitly authorized to test.
@@ -11,7 +11,7 @@ import port_scanner.services as services    # for ports service lookup
 import time                                 # for elapsed time
 import socket                               # for sock: networking module
 
-# Consants
+# Constants
 LOADING_BAR_WIDTH = 30                      # how wide the loading bar is
 CLEAR_WIDTH = LOADING_BAR_WIDTH + 20        # enough spaces to cover bar + percent + count text (to clear/update bar)
 BUFFER_SIZE = 1024                          # the maximum number of bytes to read in one call.
