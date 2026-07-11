@@ -2,7 +2,7 @@
 
 A modular command-line security toolkit in Python: password auditing, hashing, and port scanning.
 
-> **Note:** This project is under active development. Tools are being built one module at a time — see the [Roadmap](#roadmap) for current status.
+> **Note:** This project is under active development. Tools are being built one module at a time. See the [Roadmap](#roadmap) for current status.
 
 ## Overview
 
@@ -13,8 +13,8 @@ This toolkit is intended for **learning and authorized security testing only**. 
 ## Features
 
 ### Password Tool
-- **Strength checker** — scores a password against length, uppercase, lowercase, digit, and symbol rules, and reports exactly what's missing. Includes common-password detection to check a candidate against a list of 100k+ known-common passwords using an O(1) set lookup.
-- **Generator** — produce strong random passwords using Python's `secrets` module (cryptographically secure, unlike `random`), with basic and advanced modes.
+- **Strength checker** - scores a password against length, uppercase, lowercase, digit, and symbol rules, and reports exactly what's missing. Includes common-password detection to check a candidate against a list of 100k+ known-common passwords using an O(1) set lookup.
+- **Generator** - produce strong random passwords using Python's `secrets` module (cryptographically secure, unlike `random`), with basic and advanced modes.
 
 ### Hash Tool
 - Generate hashes (MD5, SHA-1, SHA-256, SHA-512, SHA3-256, SHA3-512) of text or files.
@@ -22,8 +22,10 @@ This toolkit is intended for **learning and authorized security testing only**. 
 - Compare two known hashes directly, with optional case-insensitive comparison.
 
 ### Port Scanner
-- Scan a target across quick (common ports), full (0–65535), or custom port ranges.
-- Configurable connection timeout.
+- Scan a target across quick (common ports), full (0–65535), custom range, or custom selection of individual ports.
+- Configurable connection timeout and thread count for concurrent scanning (capped for system stability).
+- Multithreaded scanning via `ThreadPoolExecutor` - significantly faster on large port ranges or slow/filtered targets.
+- Banner grabbing on open ports - captures service identification strings where available.
 - Service detection and a summary report (ports scanned, open/closed counts, time taken).
 
 ## Installation
@@ -79,7 +81,7 @@ A repo-root `main.py` that dispatches across password, hash, and scan tools is p
 - [x] Hash generator (generate, salt, hex/base64)
 - [x] Hash comparison tool
 - [x] Hash tool CLI (unified generate + compare menu)
-- [x] Port scanner (quick / full / custom, service detection)
+- [x] Port scanner
 - [ ] Unified `main.py` entry point (dispatches password / hash / scan)
 - [ ] Shared `utils/` layer
 - [ ] Unit tests
