@@ -18,6 +18,11 @@ import csv                                          # for exporting to csv
 from rich.console import Console                    # for colors
 console = Console()                                 # create a console
 
+# for clearing terminal
+import platform                                     # for checking os
+import sys                                          # for "Press any key to continue..."
+import subprocess                                   # for executing commands
+
 # Constants
 BUFFER_SIZE = 1024      # maximum number of bytes to read in one call.
 THREAD_LIMIT = 2000     # maximum amount of threads to use
@@ -33,7 +38,8 @@ def main():
     results = []        # holds port number, service name, and banner
     open_ports = 0      # amount of open ports: initialized to 0
 
-    print("\nPORT SCANNER")
+    clear_terminal()
+    print("PORT SCANNER")
 
     ip = get_target()
     ports = get_ports()
@@ -47,6 +53,7 @@ def main():
 
     export(results)
     print_summary(ports, open_ports, start_time, end_time)
+    pause()
 
 # Functions
 def get_target():
@@ -545,6 +552,51 @@ def print_summary(ports, open_ports, start_time, end_time):
     print(f"Open: {open_ports}")
     print(f"Closed: {len(ports) - open_ports}")
     print(f"Time taken: {end_time - start_time:.2f} seconds")   # rounded to hundredths
+
+def clear_terminal():
+    """
+    clear_terminal - clears all visible text from the terminal
+    """
+
+    if platform.system() == "Windows":      # cls for Windows
+        subprocess.run("cls", shell=True)
+    else:                                   # clear for macOS, Linux, Unix
+        subprocess.run(["clear"])
+
+def pause():
+    """
+    pause - display a message asking the user to press a key before continuing
+    """
+    print("Press any key to continue...", end="", flush=True)
+
+    # Windows provides a built-in module for reading a single key press
+    if platform.system() == "Windows":
+        import msvcrt
+
+        # wait for one key press and return immediately
+        msvcrt.getch()
+    # macOS and Linux terminals handle key input differently
+    else:
+        # termios controls terminal settings, and tty allows reading individual characters
+        import termios
+        import tty
+
+        # get the file descriptor for standard input (the keyboard)
+        fd = sys.stdin.fileno()
+
+        # save the current terminal settings so they can be restored later
+        old_settings = termios.tcgetattr(fd)
+
+        try:
+            # switch the terminal into raw mode where characters are read immediately and enter is not required
+            tty.setraw(fd)
+
+            # read exactly one character from the keyboard
+            sys.stdin.read(1)
+
+        finally:
+            # restore the original terminal settings to avoid leaving the user's terminal in an altered state
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
 # dunder name guard
 if __name__ == "__main__":

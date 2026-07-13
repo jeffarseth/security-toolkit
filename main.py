@@ -6,6 +6,10 @@
 # Modules
 import sys
 
+# for clearing terminal
+import platform     # for checking os
+import subprocess   # for executing commands
+
 from password_tool import cli as password_cli
 from hash_tool import cli as hash_cli
 from port_scanner import scanner as scan_cli
@@ -20,6 +24,8 @@ def main():
     banner = build_banner()             # builds and stores banner ASCII art
 
     while True:
+        clear_terminal()
+
         # print banner
         console.print(banner, end="")
         console.print("[italic dim]Made by Jeffar[/]\n")
@@ -39,6 +45,7 @@ def main():
         elif user_input == '3':
             scan_cli.main()
         elif user_input == '0':
+            clear_terminal()
             sys.exit()
         else:
             console.print("[red]INVALID INPUT[/]")
@@ -77,6 +84,16 @@ def build_banner():
         banner_text.append("\n")
 
     return banner_text
+
+def clear_terminal():
+    """
+    clear_terminal - clears all visible text from the terminal
+    """
+
+    if platform.system() == "Windows":      # cls for Windows
+        subprocess.run("cls", shell=True)
+    else:                                   # clear for macOS, Linux, Unix
+        subprocess.run(["clear"])
 
 # dunder name guard
 if __name__ == "__main__":
