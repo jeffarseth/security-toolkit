@@ -1,15 +1,18 @@
 # Jeffar - Hash Generator
 # Description - Generates hash of text (with optional salting) or file. (MD5, SHA-1, SHA-256, SHA-512, SHA3-256, SHA3-512)
 # Created - 2026-07-02
-# Last updated - 2026-07-03
+# Last updated - 2026-07-13
 
 # Modules
-import hashlib                  # for cryptographic hashing
-import base64                   # for base64 encoding
-import secrets                  # for salt generation
-import string                   # for character sets
-from getpass import getpass     # for hiding input
-from pathlib import Path        # for filepath
+import hashlib                      # for cryptographic hashing
+import base64                       # for base64 encoding
+import secrets                      # for salt generation
+import string                       # for character sets
+from getpass import getpass         # for hiding input
+from pathlib import Path            # for filepath
+
+from rich.console import Console    # for colors
+console = Console()                 # create a console
 
 # Constants
 SYMBOLS_SET = "!@#$%_-.+?"
@@ -35,7 +38,7 @@ def main():
     elif user_input == '0':
         return
     else:
-        print("\033[31mINVALID INPUT\033[0m")
+        console.print("[red]INVALID INPUT[/]")
 
 def hash_text():
     """
@@ -74,17 +77,17 @@ def hash_text():
         if hide == 'Y':
             plaintext = getpass("Enter text: ")         # user input's hidden
             while plaintext == "":                      # plaintext cannot be blank
-                print("\033[31mINVALID INPUT\033[0m")
+                console.print("[red]INVALID INPUT[/]")
                 plaintext = getpass("Enter text: ")
             break
         elif hide == 'N':
             plaintext = input("Enter text: ")           # user inputs in plaintext
             while plaintext == "":
-                print("\033[31mINVALID INPUT\033[0m")
+                console.print("[red]INVALID INPUT[/]")
                 plaintext = input("Enter text: ")
             break
         else:
-            print("\033[31mINVALID INPUT\033[0m")
+            console.print("[red]INVALID INPUT[/]")
 
     # input validation
     while True:
@@ -96,7 +99,7 @@ def hash_text():
         elif has_salt == 'N':
             break
         else:
-            print("\033[31mINVALID INPUT\033[0m")
+            console.print("[red]INVALID INPUT[/]")
 
     # input validation
     while True:
@@ -106,7 +109,7 @@ def hash_text():
             hasher = hashing_algorithms[algorithm](plaintext, salt)
             break
         else:
-            print("\033[31mINVALID INPUT\033[0m")
+            console.print("[red]INVALID INPUT[/]")
     
 
     # input validation
@@ -117,7 +120,7 @@ def hash_text():
             hash_value = encoding_types[output](hasher)
             break
         else:
-            print("\033[31mINVALID INPUT\033[0m")
+            console.print("[red]INVALID INPUT[/]")
 
     print(f"{algorithm.upper()}: {hash_value}")
     print(f"Salt used: {salt}")
@@ -159,7 +162,7 @@ def hash_file():
         if filepath.exists():                                       # check if file/folder exists on disk
             break                                                   # exit loop when a valid path is found
         else:
-            print("\033[31mPath not found.\033[0m")
+            console.print("[red]Path not found.[/]")
 
     # input validation
     while True:
@@ -169,7 +172,7 @@ def hash_file():
             hasher = hashing_algorithms[algorithm](filepath)
             break
         else:
-            print("\033[31mINVALID INPUT\033[0m")
+            console.print("[red]INVALID INPUT[/]")
 
     # input validation
     while True:
@@ -179,7 +182,7 @@ def hash_file():
             hash_value = encoding_types[output](hasher)
             break
         else:
-            print("\033[31mINVALID INPUT\033[0m")
+            console.print("[red]INVALID INPUT[/]")
 
     print(f"{algorithm.upper()}: {hash_value}")
 

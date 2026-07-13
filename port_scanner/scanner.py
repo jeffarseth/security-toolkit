@@ -1,7 +1,7 @@
 # Jeffar - Port Scanner
 # Description - Scans a target's tcp/udp ports with multithreading, service detection, and a summary report.
 # Created - 2026-07-05
-# Last updated - 2026-07-12
+# Last updated - 2026-07-13
 
 # IMPORTANT NOTE!!
 # SCOPE: only scan localhost or hosts you are explicitly authorized to test.
@@ -14,6 +14,9 @@ import time                                         # for elapsed time
 import socket                                       # for sock: networking module
 import json                                         # for exporting to json
 import csv                                          # for exporting to csv
+
+from rich.console import Console                    # for colors
+console = Console()                                 # create a console
 
 # Constants
 BUFFER_SIZE = 1024      # maximum number of bytes to read in one call.
@@ -63,7 +66,7 @@ def get_target():
             print("Resolved to:", ip)
             return ip                                               # return target's ipv4 address
         except socket.gaierror as err:                              # get address info error (a.k.a. gaierror)
-            print("\033[31mDNS lookup failed:", err, "\033[0m")     # print error details
+            console.print("[red]DNS lookup failed:", err, "[/]")     # print error details
         
 def get_ports():
     """
@@ -101,9 +104,9 @@ def get_ports():
                     if 0 <= lowest < 65536:                                             # user gets to choose range from lowest port to scan (0-65535)
                         break
                     else:
-                        print("\033[31mINVALID INPUT\033[0m")
+                        console.print("[red]INVALID INPUT[/]")
                 except ValueError:
-                    print("\033[31mINVALID INPUT - enter a whole number!\033[0m")
+                    console.print("[red]INVALID INPUT - enter a whole number![/]")
 
             if lowest == 65535:                                                         # user doesn't get to choose highest port to scan if there's no space for it
                 return [65535]
@@ -114,9 +117,9 @@ def get_ports():
                     if lowest <= highest < 65536:                                       # user gets to choose range from highest port to scan (lowest-65535)
                         break
                     else:
-                        print("\033[31mINVALID INPUT\033[0m")
+                        console.print("[red]INVALID INPUT[/]")
                 except ValueError:
-                    print("\033[31mINVALID INPUT - enter a whole number!\033[0m")
+                    console.print("[red]INVALID INPUT - enter a whole number![/]")
 
             custom_ports = list(range(lowest, highest + 1))                             # range() doesn't return highest endpoint (hence +1)
 
@@ -137,13 +140,13 @@ def get_ports():
                                 return custom_ports
 
                         else:
-                            print("\033[31mPORT ALREADY ADDED\033[0m")
+                            console.print("[red]PORT ALREADY ADDED[/]")
                             continue
                     else:
-                        print("\033[31mINVALID INPUT\033[0m")
+                        console.print("[red]INVALID INPUT[/]")
                         continue
                 except ValueError:
-                    print("\033[31mINVALID INPUT - enter a whole number!\033[0m")
+                    console.print("[red]INVALID INPUT - enter a whole number![/]")
                     continue
 
                 while True:
@@ -154,10 +157,10 @@ def get_ports():
                     elif user_input == "Y" or user_input == "":                         # repeat until there are no more ports to scan
                         break
                     else:
-                        print("\033[31mINVALID INPUT\033[0m")
+                        console.print("[red]INVALID INPUT[/]")
         
         else:
-            print("\033[31mINVALID INPUT\033[0m")
+            console.print("[red]INVALID INPUT[/]")
 
 def get_timeout():
     """
@@ -180,10 +183,10 @@ def get_timeout():
             if timeout > 0:                                     # timeout has to be greater than 0 seconds
                 return timeout
             else:
-                print("\033[31mINVALID INPUT\033[0m")
+                console.print("[red]INVALID INPUT[/]")
 
         except ValueError:
-            print("\033[31mINVALID INPUT - enter a valid number!\033[0m")
+            console.print("[red]INVALID INPUT - enter a valid number![/]")
 
 def get_threads():
     """
@@ -206,12 +209,12 @@ def get_threads():
             if 0 < max_workers <= THREAD_LIMIT:                 # threads has to greater than 0
                 break
             elif max_workers > THREAD_LIMIT:                    # thread amount: safety net for system stability
-                print(f"\033[31mCAPPED AT {THREAD_LIMIT} - enter a number <= {THREAD_LIMIT}\033[0m")
+                console.print(f"[red]CAPPED AT {THREAD_LIMIT} - enter a number <= {THREAD_LIMIT}[/]")
             else:
-                print("\033[31mINVALID INPUT\033[0m")
+                console.print("[red]INVALID INPUT[/]")
 
         except ValueError:
-            print("\033[31mINVALID INPUT - enter a whole number!\033[0m")
+            console.print("[red]INVALID INPUT - enter a whole number![/]")
 
 def scan(ip, ports, timeout, max_workers):
     """
@@ -243,7 +246,7 @@ def scan(ip, ports, timeout, max_workers):
             results = scan_types[scan_type](ip, ports, timeout, max_workers)
             break
         else:
-            print("\033[31mINVALID INPUT\033[0m")
+            console.print("[red]INVALID INPUT[/]")
         
     return results
 
@@ -322,7 +325,7 @@ def scan_ipv4_tcp(ip, ports, timeout, max_workers):
 
     except KeyboardInterrupt:
         executor.shutdown(wait=False, cancel_futures=True)              # shut down the thread pool and cancel queued scans
-        print("\n\033[31mSCAN CANCELLED\033[0m")
+        console.print("[red]SCAN CANCELLED[/]")
 
     return results
 
@@ -401,7 +404,7 @@ def scan_ipv4_udp(ip, ports, timeout, max_workers):
             
     except KeyboardInterrupt:
         executor.shutdown(wait=False, cancel_futures=True)              # shut down the thread pool and cancel queued scans
-        print("\n\033[31mSCAN CANCELLED\033[0m")
+        console.print("[red]SCAN CANCELLED[/]")
 
     return results
 
@@ -434,7 +437,7 @@ def export(results):
         elif user_input == "Y":
             break
         else:
-            print("\033[31mINVALID INPUT\033[0m")
+            console.print("[red]INVALID INPUT[/]")
 
     # input validation
     while True:
@@ -443,7 +446,7 @@ def export(results):
         filepath = filepath.resolve()                                   # turn it into an absolute path
         
         if filepath.exists() and filepath.is_file():                    # path exists but it's a file
-            print("\033[31mPath is a file, not a folder\033[0m")
+            console.print("[red]Path is a file, not a folder[/]")
         elif filepath.exists() and filepath.is_dir():                   # path exists and it's a folder
             break
         else:
@@ -464,7 +467,7 @@ def export(results):
             export_methods[selected_format](results, savepath)
             break
         else:
-            print("\033[31mINVALID INPUT\033[0m")
+            console.print("[red]INVALID INPUT[/]")
         
 def export_txt(results, savepath):
     """

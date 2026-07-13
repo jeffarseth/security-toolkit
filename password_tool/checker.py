@@ -1,11 +1,14 @@
 # Jeffar - Password Checker
 # Description - Evaluates password strength.
 # Created - 2026-06-21
-# Last updated - 2026-07-02
+# Last updated - 2026-07-13
 
 # Modules
-from pathlib import Path    # for filepath
-from getpass import getpass # for hiding input
+from pathlib import Path            # for filepath
+from getpass import getpass         # for hiding input
+
+from rich.console import Console    # for colors
+console = Console()                 # create a console
 
 # Constants
 MIN_LENGTH = 8                                                              # password's minimum length
@@ -97,7 +100,7 @@ def enter_password():
             password = input("Enter a password: ")      # user inputs in plaintext
             break
         else:
-            print("\033[31mINVALID INPUT\033[0m")
+            console.print("[red]INVALID INPUT[/]")
 
     return password
 

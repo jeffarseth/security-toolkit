@@ -1,11 +1,14 @@
 # Jeffar - Password Generator
 # Description - Generates passwords with custom options.
 # Created - 2026-06-28
-# Last updated - 2026-06-30
+# Last updated - 2026-07-13
 
 # Modules
-import secrets      # for cryptographically generating passwords
-import string       # for character sets
+import secrets                                      # for cryptographically generating passwords
+import string                                       # for character sets
+
+from rich.console import Console                    # for colors
+console = Console()                                 # create a console
 
 # Constants
 SYMBOLS_SET = "!@#$%_-.+?"
@@ -32,7 +35,7 @@ def main():
         elif user_input == '0':
             return
         else:
-            print("\033[31mINVALID INPUT\033[0m")
+            console.print("[red]INVALID INPUT[/]")
 
 # Functions
 def generate_basic():
@@ -62,47 +65,47 @@ def generate_advanced():
         try:
             length = int(input("Password Length (>0)? ").strip())               # prompt password's length
             if length <= 0:                                                     # password length must be greater than 0
-                print("\033[31mINVALID INPUT - must be greater than 0!\033[0m")
+                console.print("[red]INVALID INPUT - must be greater than 0![/]")
                 continue                                                        # repeat while loop
             
             break
 
         except ValueError:                                                      # handles non-integer input (e.g. "abc")
-            print("\033[31mINVALID INPUT - enter a whole number!\033[0m")
+            console.print("[red]INVALID INPUT - enter a whole number![/]")
             continue
 
     while True:
         while True:
             has_lowercase = input("Include Lowercase (Y/N)? ").strip().upper()  # prompt lowercase inclusion
             if has_lowercase != 'Y' and has_lowercase != 'N':
-                print("\033[31mINVALID INPUT\033[0m")
+                console.print("[red]INVALID INPUT[/]")
             else:
                 break
 
         while True:
             has_uppercase = input("Include Uppercase (Y/N)? ").strip().upper()  # prompt uppercase inclusion
             if has_uppercase != 'Y' and has_uppercase != 'N':
-                print("\033[31mINVALID INPUT\033[0m")
+                console.print("[red]INVALID INPUT[/]")
             else:
                 break
 
         while True:
             has_digits = input("Include Digits (Y/N)? ").strip().upper()        # prompt digits inclusion
             if has_digits != 'Y' and has_digits != 'N':
-                print("\033[31mINVALID INPUT\033[0m")
+                console.print("[red]INVALID INPUT[/]")
             else:
                 break
 
         while True:
             has_symbols = input("Include Symbols (Y/N)? ").strip().upper()      # prompt symbols inclusion
             if has_symbols != 'Y' and has_symbols != 'N':
-                print("\033[31mINVALID INPUT\033[0m")
+                console.print("[red]INVALID INPUT[/]")
             else:
                 break
 
         # repeat option selecting if all options are 'N'
         if has_lowercase == 'N' and has_uppercase == 'N' and has_digits == 'N' and has_symbols == 'N':
-            print("\033[31mNONE OF THE OPTIONS WERE SELECTED, RETRY\033[0m")
+            console.print("[red]NONE OF THE OPTIONS WERE SELECTED, RETRY[/]")
         else:
             break
 
@@ -110,13 +113,13 @@ def generate_advanced():
         try:
             how_many = int(input("How many passwords (>0)? ").strip())          # prompt how many passwords
             if how_many <= 0:
-                print("\033[31mINVALID INPUT - must be greater than 0!\033[0m")
+                console.print("[red]INVALID INPUT - must be greater than 0![/]")
                 continue
             
             break
 
         except ValueError:
-            print("\033[31mINVALID INPUT - enter a whole number!\033[0m")
+            console.print("[red]INVALID INPUT - enter a whole number![/]")
             continue
         
     # concatenate the characters string

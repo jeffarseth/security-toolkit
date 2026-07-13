@@ -8,6 +8,9 @@
 from hash_tool import generator     # for hash generator
 from hash_tool import compare       # for hash compare
 
+from rich.console import Console    # for colors
+console = Console()                 # create a console
+
 # Main function
 def main():
     user_input = ""
@@ -27,7 +30,7 @@ def main():
         elif user_input == '0':
             return
         else:
-            print("\033[31mINVALID INPUT\033[0m")
+            console.print("[red]INVALID INPUT[/]")
 
 # dunder name guard
 if __name__ == "__main__":

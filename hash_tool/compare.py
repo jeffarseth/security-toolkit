@@ -1,7 +1,11 @@
 # Jeffar - Hash Compare
 # Description - Compares two known hashes the user provides and check if it's a match.
 # Created - 2026-07-04
-# Last Updated - 2026-07-04
+# Last Updated - 2026-07-13
+
+# Modules
+from rich.console import Console    # for colors
+console = Console()                 # create a console
 
 # Main function
 def main():
@@ -23,7 +27,7 @@ def main():
             match = hash1 == hash2
             break
         else:
-            print("\033[31mINVALID INPUT\033[0m")
+            console.print("[red]INVALID INPUT[/]")
 
     print("MATCH" if match else "NO MATCH")
 
