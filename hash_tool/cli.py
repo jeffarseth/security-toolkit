@@ -40,6 +40,7 @@ def main():
             return
         else:
             console.print("[red]INVALID INPUT[/]")
+            pause()
 
 # Functions
 def clear_terminal():
