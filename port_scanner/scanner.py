@@ -1,7 +1,7 @@
 # Jeffar - Port Scanner
-# Description - Scans a target's ports with multithreading, service detection, and a summary report.
+# Description - Scans a target's tcp/udp ports with multithreading, service detection, and a summary report.
 # Created - 2026-07-05
-# Last updated - 2026-07-11
+# Last updated - 2026-07-12
 
 # IMPORTANT NOTE!!
 # SCOPE: only scan localhost or hosts you are explicitly authorized to test.
@@ -19,6 +19,7 @@ import csv                                          # for exporting to csv
 BUFFER_SIZE = 1024      # maximum number of bytes to read in one call.
 THREAD_LIMIT = 2000     # maximum amount of threads to use
 
+# Main function
 def main():
     ip = ""             # target ip
     ports = []          # target port/s
@@ -37,7 +38,7 @@ def main():
     max_workers = get_threads()
 
     start_time = time.time()        # start recording time
-    results = scan_ipv4_tcp(ip, ports, timeout, max_workers)
+    results = scan(ip, ports, timeout, max_workers)
     open_ports = len(results)
     end_time = time.time()          # stop recording time (ザワールド)
 
@@ -163,6 +164,7 @@ def get_timeout():
     get_timeout - prompts the user for timeout
     """
 
+    user_input = ""
     timeout = 1     # how long to wait (in seconds) for a response before giving up on this port: initialized to 1 second for default
 
     # input validation
@@ -185,9 +187,10 @@ def get_timeout():
 
 def get_threads():
     """
-    get_threads - prompts the user for amount of max_workers (threads)
+    get_threads - prompts the user for amount of max_workers (not clothes, threads)
     """
 
+    user_input = ""
     max_workers = 200   # amount of threads. how many ports to check concurrently: initialized to 200 threads for default
 
     # input validation
@@ -210,54 +213,9 @@ def get_threads():
         except ValueError:
             print("\033[31mINVALID INPUT - enter a whole number!\033[0m")
 
-def scan_one_port(ip, port, timeout):
+def scan(ip, ports, timeout, max_workers):
     """
-    scan_one_port - connects to a single port and returns its result, or None if closed
-
-    ip - target ip
-
-    port - port to check
-
-    timeout - how long to wait (in seconds) for a response before giving up on this port
-    """
-
-    result = None   # holds port number, service name, and banner: closed by default
-
-    # create a TCP IPv4 socket object ready to connect
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-    # set timeout in seconds
-    sock.settimeout(timeout)
-    
-    # attempt to connect to a specific IP and port
-    success = sock.connect_ex((ip, port))                       # unlike connect(), connect_ex() does not crash on failure
-
-    # if connection was successful
-    if success == 0:
-        # get banner
-        try:
-            raw = sock.recv(BUFFER_SIZE)                        # in bytes, or raises on timeout
-            banner = raw.decode(errors="replace").strip()       # bytes to clean one-line string
-        except (socket.timeout, OSError):                       # silent service or connection issue
-            banner = ""                                         # leave it empty
-
-        # get service name
-        service_name = services.get_service(port)
-
-        # print port number, service name if in dictionary, and banner if it exists
-        print(f"\nPORT {port}    OPEN    ({service_name})    {banner if banner else 'no banner'}", end="")
-
-        # append to result[]
-        result = {"port": port, "service": service_name, "banner": banner}
-
-    # close the socket connection to not leak a resource
-    sock.close()
-
-    return result
-
-def scan_ipv4_tcp(ip, ports, timeout, max_workers):
-    """
-    scan_ipv4_tcp - starts scanning the target with given ports and timeout for each port 
+    get_scan_type - prompts the user to scan in tcp or udp
 
     ip - target ip
 
@@ -268,17 +226,182 @@ def scan_ipv4_tcp(ip, ports, timeout, max_workers):
     max_workers - amount of threads: how many ports to check concurrently
     """
 
-    results = []                                                        # holds result[]
+    # function lookup table for scan type
+    scan_types = {
+        "tcp": scan_ipv4_tcp,
+        "udp": scan_ipv4_udp
+    }
 
-    print(f"\nScanning {len(ports)} ports on {ip}...")
+    scan_type = ""
+    results = []                                        # holds results list
 
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:       # user-controlled concurrency, capped at THREAD_LIMIT for system stability
+    # input validation
+    while True:
+        scan_type = input("Scan type (tcp/udp): ").strip().lower()
+
+        if scan_type in scan_types:                     # only use function if it's a valid scan type
+            results = scan_types[scan_type](ip, ports, timeout, max_workers)
+            break
+        else:
+            print("\033[31mINVALID INPUT\033[0m")
         
-        # get every port with the same ip and timeout
-        all_results = executor.map(lambda port: scan_one_port(ip, port, timeout), ports)
+    return results
 
-        # exclude None
-        results = [r for r in all_results if r is not None]
+def scan_one_tcp_port(ip, port, timeout):
+    """
+    scan_one_tcp_port - connects to a single tcp port and returns its result, or None if closed
+
+    ip - target ip
+
+    port - port to check
+
+    timeout - how long to wait (in seconds) for a response before giving up on this port
+    """
+
+    result = None   # holds port number, service name, and banner: closed by default
+
+    # create a TCP ipv4 socket object ready to connect
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    # set timeout in seconds
+    sock.settimeout(timeout)
+    
+    try:
+        # attempt to connect to a specific IP and port
+        success = sock.connect_ex((ip, port))                       # unlike connect(), connect_ex() does not crash on failure
+
+        # if connection was successful
+        if success == 0:
+            # get banner
+            try:
+                raw = sock.recv(BUFFER_SIZE)                        # in bytes, or raises on timeout
+                banner = raw.decode(errors="replace").strip()       # bytes to clean one-line string
+            except (socket.timeout, OSError):                       # silent service or connection issue
+                banner = ""                                         # leave it empty
+
+            # get service name
+            service_name = services.get_service(port)
+
+            # print port number, service name if in dictionary, and banner if it exists
+            print(f"PORT {port}    OPEN    ({service_name})    {banner if banner else 'no banner'}")
+
+            # append to result[]
+            result = {"port": port, "state": "OPEN", "service": service_name, "banner": banner}
+    except:
+        sock.close()                                                # close the socket connection to not leak a resource
+
+    return result
+
+def scan_ipv4_tcp(ip, ports, timeout, max_workers):
+    """
+    scan_ipv4_tcp - scans multiple tcp ports on an ipv4 target using multiple threads
+
+    ip - target ip
+
+    ports - target port/s
+
+    timeout - how long to wait (in seconds) for a response before giving up on this port
+
+    max_workers - amount of threads: how many ports to check concurrently
+    """
+
+    results = []                                                        # list of dictionaries containing open port results
+
+    print("\npress CTRL + C to cancel scan anytime")
+    print(f"Scanning {len(ports)} ports on {ip}...\n")
+
+    try:
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:   # user-controlled concurrency, capped at THREAD_LIMIT for system stability
+            
+            # get every port with the same ip and timeout
+            all_results = executor.map(lambda port: scan_one_tcp_port(ip, port, timeout), ports)
+
+            for result in all_results:
+                if result is not None:                                  # exclude none
+                    results.append(result)                              # append result as it arrives
+
+    except KeyboardInterrupt:
+        executor.shutdown(wait=False, cancel_futures=True)              # shut down the thread pool and cancel queued scans
+        print("\n\033[31mSCAN CANCELLED\033[0m")
+
+    return results
+
+def scan_one_udp_port(ip, port, timeout):
+    """
+    scan_one_udp_port - checks a single udp port and returns its result, or None if closed
+
+    ip - target ip
+
+    port - port to check
+
+    timeout - how long to wait (in seconds) for a response before giving up on this port
+    """
+
+    result = None   # holds port number, service name, and banner: closed by default
+    state = ""      # tells if udp port is open/open|filtered/closed
+
+    # create a udp ipv4 socket object ready to connect
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+    # set timeout in seconds
+    sock.settimeout(timeout)
+
+    try:    
+        # send an empty udp packet to the target
+        sock.sendto(b"", (ip, port))
+
+        # wait for a reply from the target.
+        data, addr = sock.recvfrom(BUFFER_SIZE)     # note: data and addr are unused values
+
+        # a reply means the port is open.
+        state = "open"
+    except socket.timeout:                          # no reply was received before the timeout (port may be open or filtered by a firewall)
+        state = "open|filtered"
+    except (ConnectionResetError, OSError):         # icmp "Destination Unreachable" message
+        state = "closed"
+    finally:
+        sock.close()                                # close the socket connection to not leak a resource
+
+    # get service name
+    service_name = services.get_service(port)
+
+    if state != "closed":                           # report open and open|filtered, skip closed
+        print(f"PORT    {port}    {state.upper()}    ({service_name})")
+        result = {"port": port, "state": state, "service": service_name, "banner": ""}
+
+    return result
+
+def scan_ipv4_udp(ip, ports, timeout, max_workers):
+    """
+    scan_ipv4_udp - scans multiple udp ports on an ipv4 target using multiple threads
+
+    ip - target ip
+
+    ports - target port/s
+
+    timeout - how long to wait (in seconds) for a response before giving up on this port
+
+    max_workers - amount of threads: how many ports to check concurrently
+    """
+
+    results = []                                                        # list of dictionaries containing open port results
+
+    print("\npress CTRL + C to cancel scan anytime")
+    print(f"Scanning {len(ports)} ports on {ip}...\n")
+
+    try:
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:   # user-controlled concurrency, capped at THREAD_LIMIT for system stability
+            
+            # get every port with the same ip and timeout
+            all_results = executor.map(lambda port: scan_one_udp_port(ip, port, timeout), ports)
+
+            for result in all_results:
+                if result is not None:                                  # exclude none
+                    results.append(result)                              # append result as it arrives
+            
+    except KeyboardInterrupt:
+        executor.shutdown(wait=False, cancel_futures=True)              # shut down the thread pool and cancel queued scans
+        print("\n\033[31mSCAN CANCELLED\033[0m")
 
     return results
 
@@ -286,9 +409,7 @@ def export(results):
     """
     export - prompts the user save the results to a file (plain text, JSON, or CSV) in a folder of their choosing
 
-    results - list of result dicts (port, service, banner)
-
-    filepath - where to save the file
+    results - list of result dicts (port, state, service, banner)
     """
 
     # function lookup table for exporting to a file
@@ -299,10 +420,10 @@ def export(results):
     }
 
     user_input = ""
-    filepath = ""           # where to save file (dir)
-    selected_format = ""    # choose to save as txt, json, or csv
+    filepath = ""                   # where to save file (dir)
+    selected_format = ""            # choose to save as txt, json, or csv
     filename = "port_scan_results"  # saved file name: default to "port_scan"
-    savepath = ""           # saved file with dir and extension
+    savepath = ""                   # saved file with dir and extension
 
     # input validation
     while True:
@@ -317,7 +438,7 @@ def export(results):
 
     # input validation
     while True:
-        user_input = input("Enter filepath: ")    # get raw string first
+        user_input = input("Enter filepath: ")                          # get raw string first
         filepath = Path(user_input.strip().strip('"').strip("'"))       # removes leading/trailing whitespace/newlines and surrounding Windows quotes when using "Copy as path"
         filepath = filepath.resolve()                                   # turn it into an absolute path
         
@@ -349,21 +470,34 @@ def export_txt(results, savepath):
     """
     export_txt - writes the results list to a text file
 
-    results - list of result dicts (port, service, banner)
+    results - list of result dicts (port, state, service, banner)
 
     savepath - saved file with dir and extension
     """
 
     with open(savepath, "w", encoding="utf-8") as file:                 # writes to savepath in utf-8 and create object file
         for result in results:                                          # iterate every result inside results
-            # write every line of open ports
-            file.write(f"PORT {result['port']}    OPEN    ({result['service']})    {result['banner'] if result['banner'] else 'no banner'}\n")
+            # get the port state
+            state = result.get("state", "unknown")
+
+            # get the banner
+            banner = result.get("banner", "")
+
+            # write the output line
+            line = f"PORT    {result['port']}    {state.upper()}    ({result['service']})"
+
+            # add the banner only if it exists
+            if banner:
+                line += f"    {banner}"
+
+            # write the completed line to the file separated by newlines
+            file.write(line + "\n")
 
 def export_json(results, savepath):
     """
     export_json - writes the results list to a JSON file
 
-    results - list of result dicts (port, service, banner)
+    results - list of result dicts (port, state, service, banner)
 
     savepath - saved file with dir and extension
     """
@@ -375,7 +509,7 @@ def export_csv(results, savepath):
     """
     export_csv - writes the results list to a CSV file
     
-    results - list of result dicts (port, service, banner)
+    results - list of result dicts (port, state, service, banner)
 
     savepath - saved file with dir and extension
     """
@@ -383,7 +517,7 @@ def export_csv(results, savepath):
     with open(savepath, "w", newline="", encoding="utf-8") as file:     # writes to savepath in utf-8 without automatic \n and create object file
         writer = csv.DictWriter(
             file,                                                       # write to file object
-            fieldnames=["port", "service", "banner"]                    # CSV column order
+            fieldnames=["port", "state", "service", "banner"]           # CSV column order
         )
 
         # write port, service, and banner
@@ -392,11 +526,19 @@ def export_csv(results, savepath):
 
 def print_summary(ports, open_ports, start_time, end_time):
     """
-    print_summary - prints ports scanned, amount of open ports, amount of closed ports, and the time taken to scan the target
+    print_summary - prints the total number of ports scanned, number of open ports, number of closed ports, and total scan duration.
+
+    ports - target port/s
+
+    open_ports - amount of open ports
+
+    start_time - start time for recording elapsed time during scan
+
+    end_time - end time for recording elapsed time during scan
     """
 
     print("\nScan complete.")
-    print(f"Ports scanned: {len(ports)}")
+    print(f"Total ports: {len(ports)}")
     print(f"Open: {open_ports}")
     print(f"Closed: {len(ports) - open_ports}")
     print(f"Time taken: {end_time - start_time:.2f} seconds")   # rounded to hundredths
