@@ -103,7 +103,7 @@ def hash_text():
 
     # input validation
     while True:
-        algorithm = input("Algorithm (md5/sha1/sha256/sha512/sha3_256/sha3_512):").strip().lower()
+        algorithm = input("Algorithm (md5/sha1/sha256/sha512/sha3_256/sha3_512): ").strip().lower()
 
         if algorithm in hashing_algorithms:                         # only use function if it's a valid hashing algorithm
             hasher = hashing_algorithms[algorithm](plaintext, salt)
