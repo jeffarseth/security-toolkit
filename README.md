@@ -22,11 +22,13 @@ This toolkit is intended for **learning and authorized security testing only**. 
 - Compare two known hashes directly, with optional case-insensitive comparison.
 
 ### Port Scanner
-- Scan a target across quick (common ports), full (0–65535), custom range, or custom selection of individual ports.
-- Configurable connection timeout and thread count for concurrent scanning (capped for system stability).
+- Scan a target across quick (common ports), full (0-65535), custom range, or custom selection of individual ports.
+- Configurable connection timeout and thread count for concurrent scanning.
 - Multithreaded scanning via `ThreadPoolExecutor` - significantly faster on large port ranges or slow/filtered targets.
-- Banner grabbing on open ports - captures service identification strings where available.
+- Banner grabbing on open ports.
 - Service detection and a summary report (ports scanned, open/closed counts, time taken).
+- TCP/UDP scanning options.
+- Export results to text, JSON, or CSV.
 
 ## Installation
 
