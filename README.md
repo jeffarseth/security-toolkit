@@ -87,7 +87,7 @@ Missing: symbol
 - [x] Hash tool CLI
 - [x] Port scanner
 - [x] Unified `main.py` entry point
-- [ ] Unit tests
+- [x] Unit tests (pytest)
 
 ## Responsible Use
 
