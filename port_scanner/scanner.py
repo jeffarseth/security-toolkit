@@ -73,7 +73,7 @@ def get_target():
             print("Resolved to:", ip)
             return ip                                               # return target's ipv4 address
         except socket.gaierror as err:                              # get address info error (a.k.a. gaierror)
-            console.print("[red]DNS lookup failed:", err, "[/]")     # print error details
+            console.print(f"[red]DNS lookup failed:[/] {err}")      # print error details
         
 def get_ports():
     """
