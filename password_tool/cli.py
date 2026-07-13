@@ -1,14 +1,12 @@
 # Jeffar - Password Tool CLI
 # Description - Combines password checker and generator tool into one script.
 # Created - 2026-06-30
-# Last updated - 2026-07-02
+# Last updated - 2026-07-13
 
 # Modules
 # note: KEEP __init__.py
 from password_tool import checker       # for password checker
 from password_tool import generator     # for password generator
-
-import sys          # for sys.exit()
 
 # Main function
 def main():
@@ -27,7 +25,7 @@ def main():
         elif user_input == '2':
             generator.main()
         elif user_input == '0':
-            sys.exit(0)
+            return
         else:
             print("\033[31mINVALID INPUT\033[0m")
 

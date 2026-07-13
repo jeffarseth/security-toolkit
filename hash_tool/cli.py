@@ -1,14 +1,12 @@
 # Jeffar - Hash Tool CLI
 # Description - Combines hash generator and compare tool into one script.
 # Created - 2026-07-04
-# Last updated - 2026-07-04
+# Last updated - 2026-07-13
 
 # Modules
 # note: KEEP __init__.py
 from hash_tool import generator     # for hash generator
 from hash_tool import compare       # for hash compare
-
-import sys          # for sys.exit()
 
 # Main function
 def main():
@@ -27,7 +25,7 @@ def main():
         elif user_input == '2':
             compare.main()
         elif user_input == '0':
-            sys.exit(0)
+            return
         else:
             print("\033[31mINVALID INPUT\033[0m")
 
