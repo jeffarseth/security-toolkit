@@ -2,19 +2,19 @@
 
 A modular command-line security toolkit in Python: password auditing, hashing, and port scanning.
 
-> **Note:** This project is under active development. Tools are being built one module at a time. See the [Roadmap](#roadmap) for current status.
+> **Note:** This project is under active development. See the [Roadmap](#roadmap) for current status.
 
 ## Overview
 
-A collection of command-line tools for common security tasks, built entirely on Python's standard library (no third-party dependencies for the core tools). Each tool is self-contained and independently usable, with a shared `utils/` layer for common helpers.
+A collection of command-line tools for common security tasks. Each tool is self-contained and independently usable, and all three are accessible from a single menu-driven entry point.
 
 This toolkit is intended for **learning and authorized security testing only**. See [Responsible Use](#responsible-use) before running the port scanner.
 
 ## Features
 
 ### Password Tool
-- **Strength checker** - scores a password against length, uppercase, lowercase, digit, and symbol rules, and reports exactly what's missing. Includes common-password detection to check a candidate against a list of 100k+ known-common passwords using an O(1) set lookup.
-- **Generator** - produce strong random passwords using Python's `secrets` module (cryptographically secure, unlike `random`), with basic and advanced modes.
+- Strength checker that scores a password against length, uppercase, lowercase, digit, and symbol rules, and reports exactly what's missing. Includes common-password detection to check a candidate against a list of 100k+ known-common passwords using an O(1) set lookup.
+- Generates strong random passwords using the `secrets` module (cryptographically secure, unlike `random`), with basic and advanced modes.
 
 ### Hash Tool
 - Generate hashes (MD5, SHA-1, SHA-256, SHA-512, SHA3-256, SHA3-512) of text or files.
@@ -23,11 +23,11 @@ This toolkit is intended for **learning and authorized security testing only**. 
 
 ### Port Scanner
 - Scan a target across quick (common ports), full (0-65535), custom range, or custom selection of individual ports.
+- TCP and UDP scanning, with three-state UDP reporting (open / open|filtered / closed).
 - Configurable connection timeout and thread count for concurrent scanning.
-- Multithreaded scanning via `ThreadPoolExecutor` - significantly faster on large port ranges or slow/filtered targets.
+- Multithreaded scanning via `ThreadPoolExecutor`, significantly faster on large port ranges or slow/filtered targets.
 - Banner grabbing on open ports.
 - Service detection and a summary report (ports scanned, open/closed counts, time taken).
-- TCP/UDP scanning options.
 - Export results to text, JSON, or CSV.
 
 ## Installation
@@ -37,25 +37,30 @@ Requires Python 3.11 or newer.
 ```bash
 git clone https://github.com/jeffarseth/security-toolkit.git
 cd security-toolkit
+pip install -r requirements.txt
 ```
 
-The core tools use only the standard library, so there's nothing to install. To run the test suite:
-
-```bash
-pip install -r requirements.txt   # installs pytest
-```
+Installing dependencies is required. The toolkit uses [`rich`](https://github.com/Textualize/rich) for terminal styling and [`pyfiglet`](https://github.com/pwaller/pyfiglet) for the banner.
 
 ## Usage
 
-Run the password tool's unified menu from the repo root:
+Run the whole toolkit from the repo root:
 
 ```bash
-python -m password_tool.cli
+python main.py
 ```
 
 Example:
 
 ```
+SECURITY TOOLKIT
+
+(1) Password Tool
+(2) Hash Tool
+(3) Port Scanner
+(0) Exit
+Select option: 1
+
 PASSWORD TOOL
 
 (1) Check a password
@@ -72,20 +77,16 @@ Verdict: Medium
 Missing: symbol
 ```
 
-A repo-root `main.py` that dispatches across password, hash, and scan tools is planned (see Roadmap).
-
 ## Roadmap
 
 - [x] Password strength checker
-- [x] Common-password set lookup
-- [x] Password generator (basic + advanced)
-- [x] Password tool CLI (check + generate menu)
-- [x] Hash generator (generate, salt, hex/base64)
+- [x] Password generator
+- [x] Password tool CLI
+- [x] Hash generator
 - [x] Hash comparison tool
-- [x] Hash tool CLI (unified generate + compare menu)
+- [x] Hash tool CLI
 - [x] Port scanner
-- [ ] Unified `main.py` entry point (dispatches password / hash / scan)
-- [ ] Shared `utils/` layer
+- [x] Unified `main.py` entry point
 - [ ] Unit tests
 
 ## Responsible Use
