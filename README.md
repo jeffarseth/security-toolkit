@@ -40,7 +40,7 @@ cd security-toolkit
 pip install -r requirements.txt
 ```
 
-Installing dependencies is required. The toolkit uses [`rich`](https://github.com/Textualize/rich) for terminal styling and [`pyfiglet`](https://github.com/pwaller/pyfiglet) for the banner.
+Installing dependencies is required. The toolkit uses [rich](https://github.com/Textualize/rich) for terminal styling and [pyfiglet](https://github.com/pwaller/pyfiglet) for the banner.
 
 ## Usage
 
