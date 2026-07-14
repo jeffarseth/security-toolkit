@@ -2,8 +2,6 @@
 
 A modular command-line security toolkit in Python: password auditing, hashing, and port scanning.
 
-> **Note:** This project is under active development. See the [Roadmap](#roadmap) for current status.
-
 ## Overview
 
 A collection of command-line tools for common security tasks. Each tool is self-contained and independently usable, and all three are accessible from a single menu-driven entry point.
@@ -44,7 +42,14 @@ Installing dependencies is required. The toolkit uses [rich](https://github.com/
 
 ## Usage
 
-Run the whole toolkit from the repo root:
+The simplest way to run the toolkit is the launcher script, which checks for updates and then starts the menu:
+
+```bash
+./run.bat      # Windows
+./run.sh       # Linux / macOS
+```
+
+You can also run it manually from the repo root:
 
 ```bash
 python main.py
@@ -77,17 +82,9 @@ Verdict: Medium
 Missing: symbol
 ```
 
-## Roadmap
+## Updating
 
-- [x] Password strength checker
-- [x] Password generator
-- [x] Password tool CLI
-- [x] Hash generator
-- [x] Hash comparison tool
-- [x] Hash tool CLI
-- [x] Port scanner
-- [x] Unified `main.py` entry point
-- [x] Unit tests (pytest)
+When launched via `run.bat` or `run.sh`, the script checks GitHub for a newer release on startup. If one is found, it reports the new version and asks before pulling the update.
 
 ## Responsible Use
 
